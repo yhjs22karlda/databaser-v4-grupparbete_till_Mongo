@@ -2,7 +2,7 @@ import express from 'express'
 import mongoose from 'mongoose'
 import dotenv from 'dotenv'
 dotenv.config()
-import { Channel, User, Message} from "./database/schemas.js"
+import { Channel, User, Message} from "./schemas.js"
 
 const baseaddress = "/shui/api"
 
