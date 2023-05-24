@@ -1,5 +1,3 @@
-// TODO ref validerar inte. Måste konfirmera att _id finns i middlewere?
-//      kolla 'populate'?
 import mongoose from "mongoose"
 
 const userSchema = new mongoose.Schema({

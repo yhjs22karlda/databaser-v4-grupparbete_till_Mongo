@@ -21,16 +21,28 @@ app.get(baseaddress + "/channels", async (req, res) => {
 
 app.get(baseaddress + "/channels/user", async (req, res) => {
     try {
-        const data = await User.findOne({_id: req.body.userId}, 'subscriptions')
-        const result = []
-        for await(const item of data.subscriptions) {
-            const channel = await Channel.findOne({_id: item})
-            result.push({
-                channelId: channel._id,
-                name: channel.name,
-                owner: channel.owner
-                })
-        }
+        const data = await User.findOne({_id: req.body.userId})
+        .populate({
+            path: "subscriptions",
+            populate: {path: "owner", select: "username"}
+        })
+        const result = data.subscriptions.map(item => ({
+            channelId: item.id,
+            name: item.name,
+            owner: item.owner.username
+        }))
+
+        // Gammal lösning innan populate:
+        // const data = await User.findOne({_id: req.body.userId}, 'subscriptions')
+        // const result = []
+        // for await(const item of data.subscriptions) {
+        //     const channel = await Channel.findOne({_id: item})
+        //     result.push({
+        //         channelId: channel._id,
+        //         name: channel.name,
+        //         owner: channel.owner
+        //     })
+        // }
         res.status(200).json({success: true, data: result})
     } catch (err) {
         res.status(err.statusCode || 500).json({success: false, msg: err.message})
@@ -69,7 +81,7 @@ app.get(baseaddress + "/channels/messages", async (req, res) => {
 })
 
 app.post(baseaddress + "/channels/messages/create", async (req, res) => {
-    //TODO channels får inte vara tom
+    //TODO channels får inte vara tom. Kan man använda bara ett anrop till servern?
     try {
         const userPrenums = (await User.findOne({_id: req.body.userId})).subscriptions
         const channelsToPostTo  = req.body.channels.filter(item => userPrenums.includes(item))
