@@ -13,7 +13,7 @@ app.use(express.json())
 app.get(baseaddress + "/channels", async (req, res) => {
     try {
         const data = await Channel.find({}, 'name owner -_id' )
-        res.status(201).json({success: true, data: data})
+        res.status(200).json({success: true, data: data})
     } catch (err) {
         res.status(err.statusCode || 500).json({success: false, msg: err.message})
     }
@@ -31,7 +31,7 @@ app.get(baseaddress + "/channels/user", async (req, res) => {
                 owner: channel.owner
                 })
         }
-        res.status(201).json({success: true, data: result})
+        res.status(200).json({success: true, data: result})
     } catch (err) {
         res.status(err.statusCode || 500).json({success: false, msg: err.message})
     }
@@ -62,7 +62,7 @@ app.get(baseaddress + "/channels/messages", async (req, res) => {
     try {
         const data = await Message.find({channels: {$elemMatch:{$eq:req.body.channelId}}},
         '-__v').sort({createdAt: sort})
-        res.status(201).json({success: true, data: data})
+        res.status(200).json({success: true, data: data})
     } catch (err) {
         res.status(err.statusCode || 500).json({success: false, msg: err.message})
     }
